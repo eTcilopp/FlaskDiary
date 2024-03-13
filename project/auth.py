@@ -10,6 +10,7 @@ auth = Blueprint('auth', __name__)
 def login():
     return render_template('login.html')
 
+
 @auth.route('/login', methods=['POST'])
 def login_post():
     # login code goes here
@@ -24,11 +25,13 @@ def login_post():
         return redirect(url_for('auth.login'))
 
     login_user(user, remember=remember)
-    return redirect(url_for('main.profile'))
+    return redirect(url_for('main.blog_posts'))
+
 
 @auth.route('/signup')
 def signup():
     return render_template('signup.html')
+
 
 @auth.route('/signup', methods=['POST'])
 def signup_post():
@@ -50,6 +53,7 @@ def signup_post():
     db.session.add(new_user)
     db.session.commit()
     return redirect(url_for('auth.login'))
+
 
 @auth.route('/logout')
 @login_required

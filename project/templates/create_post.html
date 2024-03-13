@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="box">
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <!-- Quill Editor container -->
+        <div id="editor" style="height: 400px;"></div>
+        <!-- Hidden field for the content, managed by Quill -->
+        {{ form.content }}
+        <button type="submit" class="button is-link">Submit</button>
+    </form>
+</div>
+
+<script>
+    var quill = new Quill('#editor', {theme: 'snow'});
+    var form = document.querySelector('form');
+    form.onsubmit = function() {
+        // Populate hidden field with the content from the Quill editor
+        var contentField = document.querySelector('input[name="content"]');
+        contentField.value = quill.root.innerHTML;
+    };
+</script>
+{% endblock %}
