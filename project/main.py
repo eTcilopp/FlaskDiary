@@ -34,13 +34,3 @@ def create_post():
         return redirect(url_for('main.blog_posts'))  # Redirect to another page after processing
     return render_template('create_post.html', form=form)
 
-
-# @main.route('/submit_post', methods=['POST'])
-# @login_required
-# def submit_post():
-#     data = request.json
-#     print(data)
-#     # Here, you would normally process the form data
-#     # Since we're doing nothing for now, we'll skip straight to rendering the profile page
-    
-#     return render_template('blog_posts.html')
