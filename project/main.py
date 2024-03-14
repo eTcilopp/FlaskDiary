@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, session, request, Flask, redirect,
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from .forms import BlogPostForm
+from .models import BlogPosts
 from . import db
 
 main = Blueprint('main', __name__)
@@ -15,7 +16,9 @@ def index():
 @main.route('/posts')
 @login_required
 def blog_posts():
-    return render_template('blog_posts.html', name=current_user.name)
+    blog_posts = BlogPosts.query.filter(BlogPosts.author_id == current_user.id).order_by(BlogPosts.id.desc()).all()
+    print(blog_posts)
+    return render_template('blog_posts.html', blog_posts=blog_posts, name=current_user.name)
 
 
 @main.route('/create_post', methods=['GET', 'POST'])
@@ -25,7 +28,9 @@ def create_post():
     if form.validate_on_submit():
         # Process the form data, e.g., save to database
         content = form.content.data
-        print(content) 
+        new_post = BlogPosts(author_id=current_user.id, text=content)
+        db.session.add(new_post)
+        db.session.commit()
         return redirect(url_for('main.blog_posts'))  # Redirect to another page after processing
     return render_template('create_post.html', form=form)
 

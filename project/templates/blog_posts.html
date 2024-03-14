@@ -3,5 +3,11 @@
 {% block content %}
 <h1 class="title">
   Welcome, {{ name }}!
+  {% for post in blog_posts %}
+    <p>{{ post.created }}</p>
+    <br>
+    <p>{{ post.text|safe  }}</p>
+    <br>
+  {% endfor %}
 </h1>
 {% endblock %}
