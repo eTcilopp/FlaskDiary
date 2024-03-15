@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+  Welcome, {{ name }}!
+</h1>
+<h2>
+    {{ post.created }}
+    <br>
+    {{ post.text|safe  }}
+    <br>
+</h2>
+
+<button id="reply-post-btn" class="button is-info">Reply</button>
+
+<div class="box" id="reply-post-form" style="display: none;">
+    <form method="post">
+        {{ form.hidden_tag() }}
+        {{ form.form_name(value='post-reply-form') }}
+        {{ form.form_parent_object_id(value=post.id) }}
+        <div id="editor" style="height: 150px;"></div>
+        {{ form.content }}
+        <button type="submit" class="button is-link">Submit</button>
+    </form>
+</div>
+<h3>
+    Comments
+</h3>
+{% for comment in comments %}
+    <p>{{ comment.created }}</p>
+    <br>
+    <p>{{ comment.text|safe }}</p>
+
+    <button id="reply-comment-btn" class="button is-info">Reply</button>
+
+    <div class="box" id="reply-comment-form" style="display: none;">
+        <form method="post">
+            {{ form.hidden_tag() }}
+            {{ form.form_name(value='comment-reply-form') }}
+            {{ form.form_parent_object_id(value=comment.id) }}
+            <div id="editor" style="height: 150px;"></div>
+            {{ form.content }}
+            <button type="submit" class="button is-link">Submit</button>
+        </form>
+    </div>
+    <br>
+{% endfor %}
+
+
+<script>
+    var quill = new Quill('#editor', {theme: 'snow'});
+    var form = document.querySelector('form');
+    form.onsubmit = function() {
+        var contentField = document.querySelector('input[name="content"]');
+        contentField.value = quill.root.innerHTML;
+    };
+
+
+    document.getElementById('reply-post-btn').onclick = function() {
+        var form = document.getElementById('reply-post-form');
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    };
+
+    document.getElementById('reply-comment-btn').onclick = function() {
+        var form = document.getElementById('reply-comment-form');
+        console.log('comment');
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    };
+</script>
+
+{% endblock %}

@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, session, request, Flask, redirect, url_for
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
-from .forms import BlogPostForm
-from .models import BlogPosts
+from .forms import BlogPostForm, CommentForm
+from .models import BlogPosts, Comments
 from . import db
 
 main = Blueprint('main', __name__)
@@ -17,8 +17,26 @@ def index():
 @login_required
 def blog_posts():
     blog_posts = BlogPosts.query.filter(BlogPosts.author_id == current_user.id).order_by(BlogPosts.id.desc()).all()
-    print(blog_posts)
     return render_template('blog_posts.html', blog_posts=blog_posts, name=current_user.name)
+
+
+@main.route('/individual_posts/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def individual_post(post_id):
+    form = CommentForm()
+    individual_post = BlogPosts.query.filter(BlogPosts.author_id == current_user.id).filter(BlogPosts.id == post_id).first()
+    comments = Comments.query.filter(Comments.parent_post_id == post_id).order_by(Comments.id.desc()).all()
+    if form.validate_on_submit():
+        content = form.content.data
+        if form.form_name.data == 'post-reply-form':
+            new_comment = Comments(author_id=current_user.id, parent_post_id=form.form_parent_object_id.data, text=content)
+        else:
+            new_comment = Comments(author_id=current_user.id, parent_comment_id=form.form_parent_object_id.data, text=content)
+        comments = Comments.query.filter(Comments.parent_post_id == post_id).order_by(Comments.id.desc()).all()
+        db.session.add(new_comment)
+        db.session.commit()
+        return redirect(url_for('main.individual_post', post_id=post_id))
+    return render_template('individual_post.html', post=individual_post, form=form, comments=comments, name=current_user.name)
 
 
 @main.route('/create_post', methods=['GET', 'POST'])
@@ -26,7 +44,6 @@ def blog_posts():
 def create_post():
     form = BlogPostForm()
     if form.validate_on_submit():
-        # Process the form data, e.g., save to database
         content = form.content.data
         new_post = BlogPosts(author_id=current_user.id, text=content)
         db.session.add(new_post)

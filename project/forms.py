@@ -17,4 +17,9 @@ class LoginForm(FlaskForm):
 
 class BlogPostForm(FlaskForm):
     content = HiddenField('Content', validators=[DataRequired()])
-    
+
+
+class CommentForm(FlaskForm):
+    content = HiddenField('Content', validators=[DataRequired()])
+    form_name = HiddenField('Form Name')
+    form_parent_object_id = HiddenField('Parent Object ID')

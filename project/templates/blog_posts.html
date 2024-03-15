@@ -3,11 +3,14 @@
 {% block content %}
 <h1 class="title">
   Welcome, {{ name }}!
+</h1>
+<h2>
   {% for post in blog_posts %}
     <p>{{ post.created }}</p>
     <br>
-    <p>{{ post.text|safe  }}</p>
+    <a href="{{ url_for('main.individual_post', post_id=post.id) }}">{{ post.text|safe }}</a>
     <br>
   {% endfor %}
-</h1>
+</h2>
+
 {% endblock %}
