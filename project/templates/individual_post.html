@@ -16,35 +16,35 @@
 <div class="box" id="reply-post-form" style="display: none;">
     <form method="post">
         {{ form.hidden_tag() }}
-        {{ form.form_name(value='post-reply-form') }}
-        {{ form.form_parent_object_id(value=post.id) }}
         <div id="editor" style="height: 150px;"></div>
         {{ form.content }}
         <button type="submit" class="button is-link">Submit</button>
     </form>
 </div>
-<h3>
-    Comments
-</h3>
-{% for comment in comments %}
-    <p>{{ comment.created }}</p>
-    <br>
-    <p>{{ comment.text|safe }}</p>
 
-    <button id="reply-comment-btn" class="button is-info">Reply</button>
+<div id="comments-section">
+    <h3>
+        Comments
+    </h3>
+    {% for comment in comments %}
+        <p>{{ comment.created }}</p>
+        <br>
+        <p>{{ comment.text|safe }}</p>
+        <button id="reply-comment-btn-{{ comment.id }}" class="button is-info reply-btn" data-comment-id="{{ comment.id }}">Reply</button>
 
-    <div class="box" id="reply-comment-form" style="display: none;">
-        <form method="post">
-            {{ form.hidden_tag() }}
-            {{ form.form_name(value='comment-reply-form') }}
-            {{ form.form_parent_object_id(value=comment.id) }}
-            <div id="editor" style="height: 150px;"></div>
-            {{ form.content }}
-            <button type="submit" class="button is-link">Submit</button>
-        </form>
-    </div>
-    <br>
-{% endfor %}
+        <div class="box" id="reply-comment-form-{{ comment.id }}" style="display: none;">
+            <form method="post">
+                {{ form.hidden_tag() }}
+                <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                <div id="editor-{{ comment.id }}" style="height: 150px;"></div>
+                {{ form.content }}
+                <button type="submit" class="button is-link">Submit</button>
+            </form>
+        </div>
+        <br>
+    {% endfor %}
+</div>
+
 
 
 <script>
@@ -65,15 +65,42 @@
         }
     };
 
-    document.getElementById('reply-comment-btn').onclick = function() {
-        var form = document.getElementById('reply-comment-form');
-        console.log('comment');
-        if (form.style.display === 'none') {
-            form.style.display = 'block';
-        } else {
-            form.style.display = 'none';
-        }
-    };
+    document.addEventListener('DOMContentLoaded', function() {
+        var replyButtons = document.querySelectorAll('.reply-btn');
+
+        replyButtons.forEach(function(btn) {
+            btn.addEventListener('click', function(event) {
+                const commentId = btn.getAttribute('data-comment-id');
+                const form = document.getElementById(`reply-comment-form-${commentId}`);
+                const editorId = `editor-${commentId}`;
+                
+                // Check if this editor has already been initialized
+                if (!form.dataset.quill) {
+                    // Initialize Quill for this specific editor
+                    var quill = new Quill(`#${editorId}`, { theme: 'snow' });
+                    form.dataset.quill = true; // Mark this form as initialized
+                    
+                    // Attach a submit event listener to this form
+                    form.querySelector('form').onsubmit = (function(quill) { // Capture the current quill instance
+                        return function() {
+                            var contentField = this.querySelector('input[name="content"]');
+                            contentField.value = quill.root.innerHTML;
+                        };
+                    })(quill);
+                }
+
+                if (form.style.display === 'none' || !form.style.display) {
+                    form.style.display = 'block';
+                } else {
+                    form.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    
+
+
 </script>
 
 {% endblock %}

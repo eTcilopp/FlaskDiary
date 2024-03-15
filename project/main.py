@@ -28,11 +28,12 @@ def individual_post(post_id):
     comments = Comments.query.filter(Comments.parent_post_id == post_id).order_by(Comments.id.desc()).all()
     if form.validate_on_submit():
         content = form.content.data
-        if form.form_name.data == 'post-reply-form':
-            new_comment = Comments(author_id=current_user.id, parent_post_id=form.form_parent_object_id.data, text=content)
+        comment_id = request.form.get('comment_id')
+        if comment_id:
+            new_comment = Comments(author_id=current_user.id, parent_comment_id=comment_id, text=content)
         else:
-            new_comment = Comments(author_id=current_user.id, parent_comment_id=form.form_parent_object_id.data, text=content)
-        comments = Comments.query.filter(Comments.parent_post_id == post_id).order_by(Comments.id.desc()).all()
+            new_comment = Comments(author_id=current_user.id, parent_post_id=post_id, text=content)
+        # comments = Comments.query.filter(Comments.parent_post_id == post_id).order_by(Comments.id.desc()).all()
         db.session.add(new_comment)
         db.session.commit()
         return redirect(url_for('main.individual_post', post_id=post_id))
