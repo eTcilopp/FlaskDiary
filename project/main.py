@@ -20,12 +20,31 @@ def blog_posts():
     return render_template('blog_posts.html', blog_posts=blog_posts, name=current_user.name)
 
 
+def get_comments_with_children(comments, children_comment_lst=[], level=0):
+    for comment in comments:
+        comment.level = level
+        children_comment_lst.append(comment)
+        children_comments = Comments.query.filter_by(parent_comment_id=comment.id).order_by(Comments.id.desc()).all()
+
+        # Update the list with the current level of comments
+        for child_comment in children_comments:
+            child_comment.level = level + 1
+            children_comment_lst.append(child_comment)
+
+        # Recursively get the next level of children comments
+        children_comment_lst = get_comments_with_children(children_comments, children_comment_lst, level + 1)
+
+    return children_comment_lst
+
+
 @main.route('/individual_posts/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def individual_post(post_id):
     form = CommentForm()
     individual_post = BlogPosts.query.filter(BlogPosts.author_id == current_user.id).filter(BlogPosts.id == post_id).first()
     comments = Comments.query.filter(Comments.parent_post_id == post_id).order_by(Comments.id.desc()).all()
+    comments_with_children = get_comments_with_children(comments)
+
     if form.validate_on_submit():
         content = form.content.data
         comment_id = request.form.get('comment_id')
@@ -37,7 +56,7 @@ def individual_post(post_id):
         db.session.add(new_comment)
         db.session.commit()
         return redirect(url_for('main.individual_post', post_id=post_id))
-    return render_template('individual_post.html', post=individual_post, form=form, comments=comments, name=current_user.name)
+    return render_template('individual_post.html', post=individual_post, form=form, comments=comments_with_children, name=current_user.name)
 
 
 @main.route('/create_post', methods=['GET', 'POST'])
