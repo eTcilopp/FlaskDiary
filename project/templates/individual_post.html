@@ -27,21 +27,23 @@
         Comments
     </h3>
     {% for comment in comments %}
-        <p>{{ comment.created }}</p>
-        <br>
-        <p>{{ comment.text|safe }}</p>
-        <button id="reply-comment-btn-{{ comment.id }}" class="button is-info reply-btn" data-comment-id="{{ comment.id }}">Reply</button>
+        <div style="margin-left: {{ comment.level * 50 }}px;">
+            <p>{{ comment.created }}</p>
+            <br>
+            <p>{{ comment.text|safe }}</p>
+            <button id="reply-comment-btn-{{ comment.id }}" class="button is-info reply-btn" data-comment-id="{{ comment.id }}">Reply</button>
 
-        <div class="box" id="reply-comment-form-{{ comment.id }}" style="display: none;">
-            <form method="post">
-                {{ form.hidden_tag() }}
-                <input type="hidden" name="comment_id" value="{{ comment.id }}">
-                <div id="editor-{{ comment.id }}" style="height: 150px;"></div>
-                {{ form.content }}
-                <button type="submit" class="button is-link">Submit</button>
-            </form>
+            <div class="box" id="reply-comment-form-{{ comment.id }}" style="display: none;">
+                <form method="post">
+                    {{ form.hidden_tag() }}
+                    <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                    <div id="editor-{{ comment.id }}" style="height: 150px;"></div>
+                    {{ form.content }}
+                    <button type="submit" class="button is-link">Submit</button>
+                </form>
+            </div>
+            <br>
         </div>
-        <br>
     {% endfor %}
 </div>
 
