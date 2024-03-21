@@ -1,11 +1,41 @@
+from flask_restful import Api, Resource
 from flask import Blueprint, render_template, session, request, Flask, redirect, url_for
 from flask_login import login_required, current_user
-from flask_wtf.csrf import generate_csrf
+from flask_wtf.csrf import generate_csrf, CSRFProtect
 from .forms import BlogPostForm, CommentForm
 from .models import BlogPosts, Comments
 from . import db
 
+app = Flask(__name__)
+
+# Initialize CSRF protection globally
+csrf = CSRFProtect(app)
+
+# Create your main Blueprint
 main = Blueprint('main', __name__)
+
+# Adjusted: Create an API Blueprint and Flask-RESTful Api attached to it
+api_bp = Blueprint('api', __name__)
+api = Api(api_bp)
+
+
+class MyResource(Resource):
+    def get(self):
+        return {'message': 'GET request received'}
+
+    def post(self):
+        return {'message': 'POST request received'}
+
+
+# Add the resource to the Api
+api.add_resource(MyResource, '/myresource')
+
+# Exempt the API Blueprint from CSRF protection
+
+csrf.exempt(api_bp)
+
+
+app.register_blueprint(api_bp, url_prefix='/api')
 
 
 @main.route('/')
@@ -31,7 +61,6 @@ def get_comments_with_children(comments, children_comment_lst=None, level=1):
         get_comments_with_children(children_comments, children_comment_lst, level + 1)
 
     return children_comment_lst
-
 
 
 @main.route('/individual_posts/<int:post_id>', methods=['GET', 'POST'])
@@ -64,6 +93,9 @@ def create_post():
         new_post = BlogPosts(author_id=current_user.id, text=content)
         db.session.add(new_post)
         db.session.commit()
-        return redirect(url_for('main.blog_posts'))  # Redirect to another page after processing
+        return redirect(url_for('main.blog_posts'))
     return render_template('create_post.html', form=form)
 
+
+# Register blueprints with the Flask application
+# app.register_blueprint(main)
