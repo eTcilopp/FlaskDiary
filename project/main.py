@@ -5,37 +5,38 @@ from flask_wtf.csrf import generate_csrf, CSRFProtect
 from .forms import BlogPostForm, CommentForm
 from .models import BlogPosts, Comments
 from . import db
+from . import rest_api
 
 app = Flask(__name__)
+# app.register_blueprint(rest_api.bp)
 
 # Initialize CSRF protection globally
-csrf = CSRFProtect(app)
+# csrf = CSRFProtect(app)
 
-# Create your main Blueprint
 main = Blueprint('main', __name__)
+# app.register_blueprint(main)
 
-# Adjusted: Create an API Blueprint and Flask-RESTful Api attached to it
-api_bp = Blueprint('api', __name__)
-api = Api(api_bp)
+# api_bp = Blueprint('api', __name__)
+# api = Api(api_bp)
 
 
-class MyResource(Resource):
-    def get(self):
-        return {'message': 'GET request received'}
+# class MyResource(Resource):
+#     def get(self):
+#         return {'message': 'GET request received'}
 
-    def post(self):
-        return {'message': 'POST request received'}
+#     def post(self):
+#         return {'message': 'POST request received'}
 
 
 # Add the resource to the Api
-api.add_resource(MyResource, '/myresource')
+# api.add_resource(MyResource, '/myresource')
 
 # Exempt the API Blueprint from CSRF protection
 
-csrf.exempt(api_bp)
+# csrf.exempt(api_bp)
 
 
-app.register_blueprint(api_bp, url_prefix='/api')
+# app.register_blueprint(api_bp, url_prefix='/api')
 
 
 @main.route('/')
@@ -98,4 +99,4 @@ def create_post():
 
 
 # Register blueprints with the Flask application
-# app.register_blueprint(main)
+# app.register_blueprint(main, url_prefix='/')

@@ -15,6 +15,8 @@ def create_app():
     app.config['SECRET_KEY'] = config["SECRET_KEY"]
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     csrf = CSRFProtect(app)
+    
+    
 
     db.init_app(app)
     
@@ -41,5 +43,11 @@ def create_app():
     # blueprint for non-auth parts of app
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+    
+    from .rest_api import rest_api as rest_api_blueprint
+    app.register_blueprint(rest_api_blueprint)
+    csrf.exempt(rest_api_blueprint)
+    
+    
 
     return app
