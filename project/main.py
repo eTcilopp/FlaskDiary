@@ -7,37 +7,9 @@ from .models import BlogPosts, Comments
 from . import db
 from . import rest_api
 
-app = Flask(__name__)
-# app.register_blueprint(rest_api.bp)
-
-# Initialize CSRF protection globally
-# csrf = CSRFProtect(app)
+# app = Flask(__name__)
 
 main = Blueprint('main', __name__)
-# app.register_blueprint(main)
-
-# api_bp = Blueprint('api', __name__)
-# api = Api(api_bp)
-
-
-# class MyResource(Resource):
-#     def get(self):
-#         return {'message': 'GET request received'}
-
-#     def post(self):
-#         return {'message': 'POST request received'}
-
-
-# Add the resource to the Api
-# api.add_resource(MyResource, '/myresource')
-
-# Exempt the API Blueprint from CSRF protection
-
-# csrf.exempt(api_bp)
-
-
-# app.register_blueprint(api_bp, url_prefix='/api')
-
 
 @main.route('/')
 def index():
@@ -96,7 +68,3 @@ def create_post():
         db.session.commit()
         return redirect(url_for('main.blog_posts'))
     return render_template('create_post.html', form=form)
-
-
-# Register blueprints with the Flask application
-# app.register_blueprint(main, url_prefix='/')

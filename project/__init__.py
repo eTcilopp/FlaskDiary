@@ -15,8 +15,6 @@ def create_app():
     app.config['SECRET_KEY'] = config["SECRET_KEY"]
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     csrf = CSRFProtect(app)
-    
-    
 
     db.init_app(app)
     
