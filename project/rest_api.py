@@ -1,66 +1,75 @@
 from flask import Blueprint, request
 from flask_restful import Resource, reqparse
-from .models import BlogPosts, Comments
+from .models import BlogPosts, Comments, User
 from sqlalchemy import not_, exists, and_
 from . import db
+import json
 
 
 rest_api = Blueprint('rest_api_bp', __name__, url_prefix='/api')
 
 
-@rest_api.route('/uncommented_posts')
-def uncommented_posts():
-    ai_user_id = 2
+@rest_api.route('/posts/<int:start_post_id>')
+def new_posts(start_post_id):
+    posts = BlogPosts.query.filter(BlogPosts.id > start_post_id).all()
+    new_post_lst = list()
+    for post in posts:
+        new_post_lst.append(
+            {
+                'external_id': post.id,
+                'author_id': post.author_id,
+                'created': post.created,
+                'modified': post.modified,
+                'text': post.text
+            })
 
-    # Subquery to find BlogPosts ids that have comments from the given user
-    subquery = db.session.query(Comments.parent_post_id).\
-        filter(Comments.author_id == ai_user_id).\
-        subquery()
-    # Query to find BlogPosts that do not have comments from the given user
-    posts_without_user_comments = db.session.query(BlogPosts).\
-        filter(~exists().where(BlogPosts.id == subquery.c.parent_post_id)).\
-        all()
-    # posts_without_comments = db.session.query(BlogPosts).all()
-    res = list()
-    for post in posts_without_user_comments:
-        res.append({'author_id': post.author_id, 'created': post.created, 'modified': post.modified, 'text': post.text})
-
-    return {'uncommented_posts': res}
+    return {'new_posts': new_post_lst}
 
 
-'''
-def uncommented_posts():
-    ai_user_id = 2
-    if request.method == 'POST':
-        return {'message': f'Hello, World ! POST {request.headers}'}
+@rest_api.route('/comments/<int:start_comment_id>')
+def new_comments(start_comment_id):
+    comments = Comments.query.filter(Comments.id > start_comment_id).all()
+    new_comment_lst = list()
+    for comment in comments:
+        new_comment_lst.append(
+            {
+                'external_id': comment.id,
+                'author_id': comment.author_id,
+                'parent_post_id': comment.parent_post_id,
+                'parent_comment_id': comment.parent_comment_id,
+                'created': comment.created,
+                'modified': comment.modified,
+                'text': comment.text
+            })
 
-'''
+    return {'new_posts': new_comment_lst}
 
-@rest_api.route('/uncommented_comments')
-def uncommented_comments():
-    ai_user_id = 2
 
-    replied_comment_ids = db.session.query(Comments.parent_comment_id).\
-        filter(Comments.author_id == ai_user_id).\
-        subquery()
+@rest_api.route('/users/<int:start_user_id>')
+def new_users(start_user_id):
+    users = User.query.filter(User.id > start_user_id).all()
+    new_user_lst = list()
+    for user in users:
+        new_user_lst.append(
+            {
+                'external_id': user.id,
+                'email': user.email,
+                'name': user.name
+            })
 
-    # Main query to find comments that:
-    # - Have a parent comment created by the given user
-    # - Do not have replies from the given user
-    comments_without_replies_from_user = db.session.query(Comments).\
-        join(Comments, Comments.id == Comments.parent_comment_id).\
-        filter(Comments.parent_comment_id is not None,  # Ensure the comment has a parent
-            Comments.author_id != ai_user_id,  # The comment is not by the given user
-            Comments.parent_comment_id == Comments.id,  # Join condition to match parent comment
-            Comments.author_id == ai_user_id,  # Parent comment is created by the given user
-            ~exists().where(and_(  # Ensure no replies from the given user to this comment
-                Comments.id == replied_comment_ids.c.parent_comment_id,
-                Comments.author_id == ai_user_id
-            ))).\
-        all()
-    res = list()
-    for comment in comments_without_replies_from_user:
-        res.append({'author_id': comment.author_id, 'created': comment.created, 'modified': comment.modified, 'text': comment.text})
+    return {'new_posts': new_user_lst}
 
-    return {'uncommented_comments': res}
 
+@rest_api.route('/add_comment', methods=['POST'])
+def add_comment():
+    data = request.data
+    data_str = data.decode('utf-8')
+    try:
+        data_json = json.loads(data_str)
+    except json.JSONDecodeError as e:
+        return {'error': str(e)}
+    Comments(**data_json)
+    new_comment = Comments(**data_json)
+    db.session.add(new_comment)
+    db.session.commit()
+    return {'success': new_comment.id}
