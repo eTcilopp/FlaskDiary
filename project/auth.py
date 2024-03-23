@@ -7,16 +7,10 @@ from . import db
 
 auth = Blueprint('auth', __name__)
 
-# @auth.route('/login')
-# def login():
-#     return render_template('login.html')
-
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        # Here, you would check the user's login credentials
-        # If successful:
         flash('Login requested for user {}, remember_me={}'.format(
             form.email.data, form.remember.data))
         email = request.form.get('email')
@@ -30,7 +24,7 @@ def login():
             return redirect(url_for('auth.login'))
 
         login_user(user, remember=remember)
-        return redirect(url_for('main.blog_posts'))  # Redirect to a different page as appropriate
+        return redirect(url_for('main.blog_posts'))
     return render_template('login.html', title='Sign In', form=form)
 
 

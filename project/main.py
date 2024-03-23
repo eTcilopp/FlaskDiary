@@ -7,8 +7,6 @@ from .models import BlogPosts, Comments
 from . import db
 from . import rest_api
 
-# app = Flask(__name__)
-
 main = Blueprint('main', __name__)
 
 @main.route('/')
