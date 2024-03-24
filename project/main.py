@@ -1,13 +1,11 @@
-from flask_restful import Api, Resource
-from flask import Blueprint, render_template, session, request, Flask, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
-from flask_wtf.csrf import generate_csrf, CSRFProtect
 from .forms import BlogPostForm, CommentForm
 from .models import BlogPosts, Comments
 from . import db
-from . import rest_api
 
 main = Blueprint('main', __name__)
+
 
 @main.route('/')
 def index():
