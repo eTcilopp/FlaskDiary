@@ -40,3 +40,5 @@ def create_app():
     csrf.exempt(rest_api_blueprint)
 
     return app
+
+

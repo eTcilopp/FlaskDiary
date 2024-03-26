@@ -64,3 +64,4 @@ def create_post():
         db.session.commit()
         return redirect(url_for('main.blog_posts'))
     return render_template('create_post.html', form=form)
+
