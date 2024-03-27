@@ -16,8 +16,10 @@ def create_app():
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = config["SECRET_KEY"]
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:P@ssw0rd!@57e25356155c:3306/mariadb_flask'
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:P@ssw0rd!@10.0.0.217:3306/mysql'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:P%40ssw0rd%21@10.0.0.217:3306/mysql'
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     
