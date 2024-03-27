@@ -17,6 +17,10 @@ def create_app():
 
     app.config['SECRET_KEY'] = config["SECRET_KEY"]
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:P@ssw0rd!@57e25356155c:3306/mariadb_flask'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    
     csrf = CSRFProtect(app)
 
     db.init_app(app)
