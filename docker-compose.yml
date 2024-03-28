@@ -10,9 +10,7 @@ services:
     depends_on:
       - db
     environment:  # Define environment variables for the Flask container
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: IfqGtDdgPsUj8TI0Tdgv8ORW9Gug6QgoufllsW0XBak5tdeeqK2F3I8LM85o7ROS
-      MYSQL_DATABASE: diary_db
+      DOCKER_CONTAINER: True
 
   db:
     image: mariadb
