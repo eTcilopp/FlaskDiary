@@ -3,3 +3,4 @@ instance/db.sqlite
 .env
 project/__pycache__/
 docker-compose.yml
+project/__pycache__/*
