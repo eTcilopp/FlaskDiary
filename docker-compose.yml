@@ -10,7 +10,7 @@ services:
     depends_on:
       - db
     environment:  # Define environment variables for the Flask container
-      DOCKER_CONTAINER: True
+      DOCKER_CONTAINER: 1
 
   db:
     image: mariadb

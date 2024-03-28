@@ -17,7 +17,7 @@ def create_app():
 
     app.config['SECRET_KEY'] = config["SECRET_KEY"]
 
-    if config['DOCKER_CONTAINER'] == 'True':
+    if config['DOCKER_CONTAINER'] == 1:
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     else:
         app.config['SQLALCHEMY_DATABASE_URI'] =\
