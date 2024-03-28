@@ -17,12 +17,9 @@ def create_app():
 
     app.config['SECRET_KEY'] = config["SECRET_KEY"]
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:P@ssw0rd!@10.0.0.217:3306/mysql'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:P%40ssw0rd%21@10.0.0.217:3306/mysql'
-
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{config['MYSQL_USER']}:{confign['MYSQL_PASSWORD']}@db/{config['MYSQL_DATABASE']}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
-    
+
     csrf = CSRFProtect(app)
 
     db.init_app(app)
