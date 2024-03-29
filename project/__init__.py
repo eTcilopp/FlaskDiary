@@ -17,8 +17,6 @@ def create_app():
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = config["SECRET_KEY"]
-    print(os.environ.get('DOCKER_CONTAINER') == '1')
-    print(f"mysql://{config['MYSQL_USER']}:{config['MYSQL_PASSWORD']}@db/{config['MYSQL_DATABASE']}")
     if os.environ.get('DOCKER_CONTAINER') == '1':
         app.config['SQLALCHEMY_DATABASE_URI'] =\
             f"mysql://{os.environ['MYSQL_USER']}:{os.environ['MYSQL_PASSWORD']}@db/{os.environ['MYSQL_DATABASE']}"
