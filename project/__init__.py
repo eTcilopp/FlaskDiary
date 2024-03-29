@@ -7,7 +7,6 @@ import os
 
 db = SQLAlchemy()
 
-
 def create_app():
     from .rest_api import rest_api as rest_api_blueprint
     from .auth import auth as auth_blueprint
