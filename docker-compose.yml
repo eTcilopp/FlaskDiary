@@ -15,19 +15,19 @@ services:
       MYSQL_PASSWORD: IfqGtDdgPsUj8TI0Tdgv8ORW9Gug6QgoufllsW0XBak5tdeeqK2F3I8LM85o7ROS
       MYSQL_DATABASE: diary_db
       MYSQL_USER: admin
-    healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:5000/health"]  # Check the health of the Flask service
-      interval: 10s  # Retry every 10 seconds until the service becomes healthy
-      timeout: 10s   # Timeout for each health check attempt
-      retries: 5
 
   db:
     image: mariadb
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: UJ93YQBLj8Uggr4dxE267z5sf7xM3AYKWPpoxy5BOkX07B5Gel217bfoZQGYqh27
       MYSQL_DATABASE: diary_db
       MYSQL_USER: admin
       MYSQL_PASSWORD: IfqGtDdgPsUj8TI0Tdgv8ORW9Gug6QgoufllsW0XBak5tdeeqK2F3I8LM85o7ROS
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "mysql -h ${MYSQL_HOST} -u  ${MYSQL_ROOT_USER} -p$$MYSQL_ROOT_PASSWORD" ]
+      interval: 30s
+      timeout: 20s
+      retries: 10
     ports:
       - "3306:3306"
