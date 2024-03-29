@@ -8,7 +8,8 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - db
+      db:
+        condition: service_healthy  # Wait for the 'db' service to be healthy
     environment:  # Define environment variables for the Flask container
       DOCKER_CONTAINER: 1
       MYSQL_PASSWORD: IfqGtDdgPsUj8TI0Tdgv8ORW9Gug6QgoufllsW0XBak5tdeeqK2F3I8LM85o7ROS
