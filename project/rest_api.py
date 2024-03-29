@@ -9,6 +9,7 @@ from dotenv import dotenv_values
 
 config = dotenv_values("./.env")
 PREDEFINED_TOKEN = config["API_TOKEN"]
+AI_USER_NAME = config["AI_USER_NAME"]
 
 
 rest_api = Blueprint('rest_api_bp', __name__, url_prefix='/api')
@@ -23,7 +24,6 @@ def requires_token_authorization(f):
         if auth_header and auth_header.startswith('Bearer '):
             token = auth_header.split(" ")[1]
 
-        print(token)
         if token != PREDEFINED_TOKEN:
             return jsonify({'message': 'Not Authorized'}), 403
 
@@ -99,3 +99,24 @@ def add_comment():
     db.session.add(new_comment)
     db.session.commit()
     return jsonify({'success': new_comment.id})
+
+
+@rest_api.route('/ai_user', methods=['GET', 'POST'])
+@requires_token_authorization
+def create_ai_user():
+    ai_user = User.query.filter(User.name==AI_USER_NAME).first()
+    if ai_user:
+        return jsonify({'ai_user': ai_user.id})
+    if request.method == 'GET':
+        return jsonify({'ai_user': 'does not exist'})
+
+    data = request.data
+    data_str = data.decode('utf-8')
+    try:
+        data_json = json.loads(data_str)
+    except json.JSONDecodeError as e:
+        return {'error': str(e)}
+    ai_user = User(**data_json)
+    db.session.add(ai_user)
+    db.session.commit()
+    return jsonify({'ai_user': ai_user.id})
