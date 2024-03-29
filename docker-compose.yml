@@ -25,7 +25,7 @@ services:
       MYSQL_PASSWORD: IfqGtDdgPsUj8TI0Tdgv8ORW9Gug6QgoufllsW0XBak5tdeeqK2F3I8LM85o7ROS
     restart: always
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-pIfqGtDdgPsUj8TI0Tdgv8ORW9Gug6QgoufllsW0XBak5tdeeqK2F3I8LM85o7ROS"]
+      test: ["CMD", "nc", "-z", "localhost", "3306"] 
       interval: 10s
       timeout: 10s
       retries: 5
