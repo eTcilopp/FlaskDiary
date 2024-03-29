@@ -23,11 +23,11 @@ services:
       MYSQL_DATABASE: diary_db
       MYSQL_USER: admin
       MYSQL_PASSWORD: IfqGtDdgPsUj8TI0Tdgv8ORW9Gug6QgoufllsW0XBak5tdeeqK2F3I8LM85o7ROS
-    restart: on-failure
+    restart: always
     healthcheck:
-      test: ["CMD-SHELL", "mysql -h ${MYSQL_HOST} -u  ${MYSQL_ROOT_USER} -p$$MYSQL_ROOT_PASSWORD" ]
-      interval: 30s
-      timeout: 20s
-      retries: 10
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-pIfqGtDdgPsUj8TI0Tdgv8ORW9Gug6QgoufllsW0XBak5tdeeqK2F3I8LM85o7ROS"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
     ports:
       - "3306:3306"
