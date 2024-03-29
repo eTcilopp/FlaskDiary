@@ -24,8 +24,6 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: IfqGtDdgPsUj8TI0Tdgv8ORW9Gug6QgoufllsW0XBak5tdeeqK2F3I8LM85o7ROS
     restart: always
-    volumes:
-        mariadb_data:/var/lib/mysql
     healthcheck:
         test: "mariadb $$MYSQL_DATABASE -uroot -p$$MYSQL_ROOT_PASSWORD -e 'SELECT 1;'"
         interval: 2s
