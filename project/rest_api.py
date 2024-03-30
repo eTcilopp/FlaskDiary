@@ -52,10 +52,8 @@ def new_posts(start_post_id):
 @rest_api.route('/comments/<int:start_comment_id>')
 @requires_token_authorization
 def new_comments(start_comment_id):
-    ai_user = User.query.filter(User.name == AI_USER_NAME).first()
     comments = Comments.query.\
-        filter(Comments.id > start_comment_id).\
-        filter(Comments.author_id != ai_user.id).all()
+        filter(Comments.id > start_comment_id).all()
     new_comment_lst = list()
     for comment in comments:
         new_comment_lst.append(
