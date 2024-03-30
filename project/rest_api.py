@@ -52,7 +52,10 @@ def new_posts(start_post_id):
 @rest_api.route('/comments/<int:start_comment_id>')
 @requires_token_authorization
 def new_comments(start_comment_id):
-    comments = Comments.query.filter(Comments.id > start_comment_id).all()
+    ai_user = User.query.filter(User.name == AI_USER_NAME).first()
+    comments = Comments.query.\
+        filter(Comments.id > start_comment_id).\
+        filter(Comments.author_id != ai_user.id).all()
     new_comment_lst = list()
     for comment in comments:
         new_comment_lst.append(
@@ -66,7 +69,7 @@ def new_comments(start_comment_id):
                 'text': comment.text
             })
 
-    return jsonify({'new_posts': new_comment_lst})
+    return jsonify({'new_comments': new_comment_lst})
 
 
 @rest_api.route('/users/<int:start_user_id>')
@@ -82,7 +85,7 @@ def new_users(start_user_id):
                 'name': user.name
             })
 
-    return jsonify({'new_posts': new_user_lst})
+    return jsonify({'new_users': new_user_lst})
 
 
 @rest_api.route('/add_comment', methods=['POST'])
