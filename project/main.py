@@ -9,7 +9,7 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    return render_template('index.html', name=current_user.name)
+    return render_template('index.html')
 
 
 @main.route('/posts')
