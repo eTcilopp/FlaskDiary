@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from .forms import BlogPostForm, CommentForm
 from .models import BlogPosts, Comments
+from sqlalchemy.orm import joinedload
 from . import db
 
 main = Blueprint('main', __name__)
@@ -15,8 +16,15 @@ def index():
 @main.route('/posts')
 @login_required
 def blog_posts():
-    blog_posts = BlogPosts.query.filter(BlogPosts.author_id == current_user.id).order_by(BlogPosts.id.desc()).all()
-    return render_template('blog_posts.html', blog_posts=blog_posts, name=current_user.name)
+    # blog_posts = BlogPosts.query.filter(BlogPosts.author_id == current_user.id).order_by(BlogPosts.id.desc()).all()
+    blog_posts = (
+        BlogPosts.query
+        .filter(BlogPosts.author_id == current_user.id)
+        .order_by(BlogPosts.id.desc())
+        .options(joinedload(BlogPosts.author))
+        .all()
+    )
+    return render_template('blog_posts.html', blog_posts=blog_posts)
 
 
 def get_comments_with_children(comments, children_comment_lst=None, level=1):
