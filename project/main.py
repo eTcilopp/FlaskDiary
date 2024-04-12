@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from .forms import BlogPostForm, CommentForm
 from .models import BlogPosts, Comments
+from sqlalchemy.orm import joinedload
 from . import db
 
 main = Blueprint('main', __name__)
@@ -16,7 +17,7 @@ def index():
 @login_required
 def blog_posts():
     blog_posts = BlogPosts.query.filter(BlogPosts.author_id == current_user.id).order_by(BlogPosts.id.desc()).all()
-    return render_template('blog_posts.html', blog_posts=blog_posts, name=current_user.name)
+    return render_template('blog_posts.html', blog_posts=blog_posts)
 
 
 def get_comments_with_children(comments, children_comment_lst=None, level=1):
@@ -25,7 +26,7 @@ def get_comments_with_children(comments, children_comment_lst=None, level=1):
     for comment in comments:
         comment.level = level
         children_comment_lst.append(comment)
-        children_comments = Comments.query.filter_by(parent_comment_id=comment.id).order_by(Comments.id.desc()).all()
+        children_comments = Comments.query.filter_by(parent_comment_id=comment.id).order_by(Comments.id.desc()).options(joinedload(Comments.author)).all()
 
         get_comments_with_children(children_comments, children_comment_lst, level + 1)
 
@@ -37,7 +38,14 @@ def get_comments_with_children(comments, children_comment_lst=None, level=1):
 def individual_post(post_id):
     form = CommentForm()
     individual_post = BlogPosts.query.filter(BlogPosts.author_id == current_user.id).filter(BlogPosts.id == post_id).first()
-    comments = Comments.query.filter(Comments.parent_post_id == post_id).order_by(Comments.id.asc()).all()
+    # comments = Comments.query.filter(Comments.parent_post_id == post_id).order_by(Comments.id.asc()).all()
+    comments = (
+        Comments.query
+        .filter(Comments.parent_post_id == post_id)
+        .order_by(Comments.id.asc())
+        .options(joinedload(Comments.author))
+        .all()
+    )
     comments_with_children = get_comments_with_children(comments)
 
     if form.validate_on_submit():
