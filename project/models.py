@@ -20,6 +20,7 @@ class BlogPosts(db.Model):
     __tablename__ = 'blog_posts'
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    author = db.relationship('User', backref='posts')
     created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
     modified = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
     status = db.Column(db.Enum(PostStatusEnum), default=PostStatusEnum.published, nullable=False)
@@ -30,6 +31,7 @@ class Comments(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    author = db.relationship('User', backref='comments')
     parent_post_id = db.Column(db.Integer, db.ForeignKey('blog_posts.id'), nullable=True)
     parent_comment_id = db.Column(db.Integer, db.ForeignKey('comments.id'), nullable=True)
     created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())

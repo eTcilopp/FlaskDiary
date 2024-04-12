@@ -4,8 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import dotenv_values
 from flask_login import LoginManager
 import os
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
+migrate = Migrate()
 
 def create_app():
     from .rest_api import rest_api as rest_api_blueprint
@@ -26,6 +28,7 @@ def create_app():
     csrf = CSRFProtect(app)
 
     db.init_app(app)
+    migrate.init_app(app, db)
 
     with app.app_context():
         db.create_all()
