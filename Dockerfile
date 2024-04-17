@@ -4,7 +4,7 @@ FROM python:3.8-slim-buster
 
 # Install necessary system packages, including gcc
 RUN apt-get update \
-    && apt-get install -y pkg-config default-libmysqlclient-dev gcc \
+    && apt-get install -y pkg-config default-libmysqlclient-dev gcc git \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /project
