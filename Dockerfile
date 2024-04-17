@@ -19,5 +19,7 @@ COPY . .
 ENV FLASK_APP=app.py
 EXPOSE 5000
 
-CMD [ "python3", "app.py"]
+RUN chmod +x entrypoint.sh
+
+ENTRYPOINT ["./entrypoint.sh"]
 
