@@ -2,7 +2,6 @@
 instance/db.sqlite
 .env
 project/__pycache__/
-docker-compose.yml
 project/__pycache__/*
 project/__pycache__/models.cpython-310.pyc
 project/__pycache__/__init__.cpython-310.pyc
