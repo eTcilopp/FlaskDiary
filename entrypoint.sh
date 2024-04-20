@@ -1,12 +1,13 @@
 #!/bin/bash
 
-# Pull the latest changes from Git
-git pull
 
-# Migrate the database
-# flask db init
-# flask db migrate -m "Initial migration."
-# flask db upgrade
+# Exit immediately if any command fails
+set -e
+
+# Pull the latest changes from Git
+git pull origin master
+
+flask db upgrade
 
 # Start your application
-python3 app.py
+exec python3 app.py

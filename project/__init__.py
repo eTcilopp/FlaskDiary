@@ -24,6 +24,12 @@ def create_app():
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     else:
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+        # TODO: For connecting from local to remote DB
+        # app.config['SQLALCHEMY_DATABASE_URI'] = \
+        #     f"mysql://{os.environ['MYSQL_USER']}:{os.environ['MYSQL_PASSWORD']}@{db_ip_address}/{os.environ['MYSQL_DATABASE']}"
+        app.config['SQLALCHEMY_DATABASE_URI'] = \
+            f"mysql://{os.environ['MYSQL_USER']}:{os.environ['MYSQL_PASSWORD']}@10.0.0.220/{os.environ['MYSQL_DATABASE']}"
+        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     csrf = CSRFProtect(app)
 
