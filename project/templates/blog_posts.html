@@ -6,7 +6,7 @@
     {% for post in blog_posts %}
     <div class="columns">
       <div class="column is-narrow has-text-left">
-          <p>{{ post.created }}</p>
+          <p>{{ moment(post.created).format('LLL') }}</p>
       </div>
       <div class="column has-text-left">
           <a href="{{ url_for('main.individual_post', post_id=post.id) }}">{{ post.text|truncate|safe }}</a>
