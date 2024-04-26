@@ -2,7 +2,7 @@
 
 {% block content %}
 <h2>
-    {{ post.created }}
+    {{ moment(post.created).format('LLL') }}
     <br>
     {{ post.text|safe  }}
     <br>
@@ -25,7 +25,7 @@
     </h3>
     {% for comment in comments %}
         <div style="margin-left: {{ comment.level * 50 }}px;">
-            <p>{{ comment.created }}</p>
+            <p>{{ moment(comment.created).format('LLL') }}</p>
             <p>{{ comment.author.name }}</p>
             <br>
             <p>{{ comment.text|safe }}</p>

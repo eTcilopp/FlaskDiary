@@ -5,9 +5,11 @@ from dotenv import dotenv_values
 from flask_login import LoginManager
 import os
 from flask_migrate import Migrate
+from flask_moment import Moment
 
 db = SQLAlchemy()
 migrate = Migrate()
+
 
 def create_app():
     from .rest_api import rest_api as rest_api_blueprint
@@ -16,6 +18,7 @@ def create_app():
     from .models import User
     config = dotenv_values("./.env")
     app = Flask(__name__)
+    moment = Moment(app)
 
     app.config['SECRET_KEY'] = config["SECRET_KEY"]
     if os.environ.get('DOCKER_CONTAINER') == '1':
