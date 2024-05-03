@@ -8,7 +8,7 @@
     <br>
 </h2>
 
-<button id="reply-post-btn" class="button is-info">Reply</button>
+<button id="reply-post-btn" class="button is-small is-info">Reply</button>
 
 <div class="box" id="reply-post-form" style="display: none;">
     <form method="post">
@@ -29,7 +29,7 @@
             <p>{{ comment.author.name }}</p>
             <br>
             <p>{{ comment.text|safe }}</p>
-            <button id="reply-comment-btn-{{ comment.id }}" class="button is-info reply-btn" data-comment-id="{{ comment.id }}">Reply</button>
+            <button id="reply-comment-btn-{{ comment.id }}" class="button is-small is-info reply-btn" data-comment-id="{{ comment.id }}">Reply</button>
 
             <div class="box" id="reply-comment-form-{{ comment.id }}" style="display: none;">
                 <form method="post">
